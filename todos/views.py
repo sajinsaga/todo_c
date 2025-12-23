@@ -1,4 +1,4 @@
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from .models import Task
 # Create your views here.
 
@@ -9,4 +9,28 @@ def addTask (request):
     return redirect('home')
 
 
-             
+def  mrk_as_done (request, pk):
+    task=get_object_or_404(Task,pk=pk)
+    task.is_complete=True
+    task.save()
+    return redirect ('home') 
+
+
+def edit(request,pk):
+    get_task=get_object_or_404(Task,pk=pk)
+    if request.method =="POST":
+        new_task=request.POST["task"]
+        get_task.task=new_task
+        get_task.save()
+        return redirect('home')
+    else:
+        context={
+            'get_task':get_task
+        }
+        return render(request,"edit.html",context)
+    
+
+def delete(request,pk):
+    task= get_object_or_404(Task, pk=pk)
+    task.delete()
+    return redirect('home')
